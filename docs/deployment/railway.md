@@ -90,12 +90,25 @@ PGDATA=/home/postgres/pgdata/data/pgdata
 
 If the failed volume has partial Postgres files, delete and recreate it.
 
-After it boots, connect with psql and run:
+If Postgres boots but logs `database "chatbotx" does not exist`, create it
+manually from the Railway service shell:
 
-```sql
-create extension if not exists timescaledb cascade;
-create extension if not exists vector;
-create extension if not exists btree_gist;
+```bash
+psql -U postgres -d postgres -c \
+  "CREATE ROLE chatbotx WITH LOGIN PASSWORD '<strong-password>';" || true
+psql -U postgres -d postgres -c \
+  "CREATE DATABASE chatbotx OWNER chatbotx;"
+```
+
+Then enable extensions:
+
+```bash
+psql -U postgres -d chatbotx -c \
+  "CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;"
+psql -U postgres -d chatbotx -c \
+  "CREATE EXTENSION IF NOT EXISTS vector;"
+psql -U postgres -d chatbotx -c \
+  "CREATE EXTENSION IF NOT EXISTS btree_gist;"
 ```
 
 Use the private/internal Railway host in `DATABASE_URL` for app services.

@@ -137,7 +137,10 @@ export async function loadOpenApiSpec(): Promise<DynamicTool[]> {
     return cachedTools
   }
 
-  const specUrl = `${env.CHATBOTX_API_URL}/public-spec.json`
+  const specUrl = new URL(
+    "/api/public-spec.json",
+    env.CHATBOTX_API_URL,
+  ).toString()
 
   const response = await fetch(specUrl, {
     headers: { Accept: "application/json" },

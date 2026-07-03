@@ -67,10 +67,16 @@ Create a Railway service from Docker image:
 timescale/timescaledb-ha:pg18-all
 ```
 
-Add a persistent volume:
+Add a persistent volume directly on the image `PGDATA` directory:
 
 ```text
-/home/postgres/pgdata
+/home/postgres/pgdata/data
+```
+
+Do not set `PGDATA`. Mounting the parent directory can fail with:
+
+```text
+mkdir: cannot create directory '/home/postgres/pgdata/data': Permission denied
 ```
 
 Set variables:

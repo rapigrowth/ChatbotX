@@ -67,17 +67,15 @@ Create a Railway service from Docker image:
 timescale/timescaledb-ha:pg18-all
 ```
 
-Add a persistent volume directly on the image `PGDATA` directory:
+Add a persistent volume at the image data mount point:
 
 ```text
 /home/postgres/pgdata/data
 ```
 
-Do not set `PGDATA`. Mounting the parent directory can fail with:
-
-```text
-mkdir: cannot create directory '/home/postgres/pgdata/data': Permission denied
-```
+Set `PGDATA` to a subdirectory inside that mount point. Railway volumes can
+contain `lost+found`, and `initdb` refuses to initialize directly in a non-empty
+mount root.
 
 Set variables:
 
@@ -85,7 +83,11 @@ Set variables:
 POSTGRES_DB=chatbotx
 POSTGRES_USER=chatbotx
 POSTGRES_PASSWORD=<strong-password>
+PGDATA=/home/postgres/pgdata/data/pgdata
 ```
+
+If the failed volume has partial Postgres files, delete and recreate it. If it
+only has `lost+found`, keep it and redeploy with `PGDATA` set.
 
 After it boots, connect with psql and run:
 

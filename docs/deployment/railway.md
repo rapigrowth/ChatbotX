@@ -180,6 +180,11 @@ Use the same variables as `builder`, except no custom domain is needed.
 Create a Cloudflare API token using the `Edit Cloudflare Workers` template.
 It needs access to the `rapigrowth.org` zone.
 
+Cloudflare custom-domain deploy currently needs Workers Paid for PartyKit's
+Durable Objects. On Workers Free, PartyKit deploy can fail with
+`new_sqlite_classes`; `partykit.json` does not support adding that migration.
+If you stay on Free, use the Railway realtime fallback instead.
+
 From local repo:
 
 ```bash

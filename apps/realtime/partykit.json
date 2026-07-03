@@ -6,15 +6,5 @@
   "parties": {
     "workspaces": "src/parties/workspaces.ts",
     "guests": "src/parties/guests.ts"
-  },
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": [
-        "Server",
-        "WorkspaceParty",
-        "GuestConversationParty"
-      ]
-    }
-  ]
+  }
 }

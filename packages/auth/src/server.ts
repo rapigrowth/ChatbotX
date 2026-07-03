@@ -381,6 +381,8 @@ export function createAuth(config: AuthConfig) {
       },
     },
     emailVerification: {
+      sendOnSignUp: true,
+      sendOnSignIn: true,
       sendVerificationEmail: async ({ user, url }, request) => {
         if (!request) {
           throw new APIError(400, {

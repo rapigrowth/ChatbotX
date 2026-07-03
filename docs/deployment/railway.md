@@ -61,23 +61,25 @@ NEXT_PUBLIC_STORAGE_URL=https://storage.chatbotx.rapigrowth.org/
 
 ## 4. Timescale/Postgres on Railway
 
-Create a Railway service from Docker image:
+Create a Railway GitHub service from this repo/branch.
+
+Settings:
 
 ```text
-timescale/timescaledb-ha:pg18-all
+Root Directory: /
+Config file: /railway/timescale.toml
 ```
 
-Add a persistent volume at the image data mount point:
+This wraps `timescale/timescaledb-ha:pg18-all` and fixes Railway volume
+ownership before Postgres starts.
+
+Add a persistent volume:
 
 ```text
-/home/postgres/pgdata/data
+/home/postgres/pgdata
 ```
 
-Set `PGDATA` to a subdirectory inside that mount point. Railway volumes can
-contain `lost+found`, and `initdb` refuses to initialize directly in a non-empty
-mount root.
-
-Set variables:
+Set variables without quotes:
 
 ```env
 POSTGRES_DB=chatbotx
@@ -86,8 +88,7 @@ POSTGRES_PASSWORD=<strong-password>
 PGDATA=/home/postgres/pgdata/data/pgdata
 ```
 
-If the failed volume has partial Postgres files, delete and recreate it. If it
-only has `lost+found`, keep it and redeploy with `PGDATA` set.
+If the failed volume has partial Postgres files, delete and recreate it.
 
 After it boots, connect with psql and run:
 

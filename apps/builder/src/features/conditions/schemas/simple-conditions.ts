@@ -22,6 +22,9 @@ export const conversationTransferredToBot = createSimpleCondition(
 export const newContact = createSimpleCondition(
   triggerEventTypes.enum.newContact,
 )
+export const commentReceived = createSimpleCondition(
+  triggerEventTypes.enum.commentReceived,
+)
 export const contactUnsubscribedFormBroadcast = createSimpleCondition(
   triggerEventTypes.enum.contactUnsubscribedFormBroadcast,
 )

@@ -111,6 +111,9 @@ export class TriggerMatcherService {
         triggerEventTypes.enum.conversationTransferredToBot,
       ],
       [triggerEventTypes.enum.newContact]: [triggerEventTypes.enum.newContact],
+      [triggerEventTypes.enum.commentReceived]: [
+        triggerEventTypes.enum.commentReceived,
+      ],
       [triggerEventTypes.enum.contactUnsubscribedFormBroadcast]: [
         triggerEventTypes.enum.contactUnsubscribedFormBroadcast,
       ],

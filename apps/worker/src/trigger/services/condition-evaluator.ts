@@ -33,6 +33,7 @@ export class ConditionEvaluator {
       case triggerEventTypes.enum.conversationTransferredToHuman:
       case triggerEventTypes.enum.conversationTransferredToBot:
       case triggerEventTypes.enum.newContact:
+      case triggerEventTypes.enum.commentReceived:
       case triggerEventTypes.enum.contactUnsubscribedFormBroadcast:
       case triggerEventTypes.enum.archived:
       case triggerEventTypes.enum.followUp:

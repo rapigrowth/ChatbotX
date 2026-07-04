@@ -14,6 +14,7 @@ const SUPPORTED_EVENT_TYPES: Set<TriggerEventType> = new Set([
   triggerEventTypes.enum.conversationTransferredToHuman,
   triggerEventTypes.enum.conversationTransferredToBot,
   triggerEventTypes.enum.newContact,
+  triggerEventTypes.enum.commentReceived,
   triggerEventTypes.enum.contactUnsubscribedFormBroadcast,
   triggerEventTypes.enum.archived,
   triggerEventTypes.enum.followUp,

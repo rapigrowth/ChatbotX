@@ -2,6 +2,7 @@ import { customFieldValueChanged } from "./custom-field-value-changed"
 import { dateTimeBasedTrigger } from "./date-time-based-trigger"
 import {
   archived,
+  commentReceived,
   contactReferredANewContact,
   contactReferredExistingContact,
   contactUnsubscribedFormBroadcast,
@@ -25,6 +26,7 @@ export const allConditions = {
   conversationTransferredToHuman,
   conversationTransferredToBot,
   newContact,
+  commentReceived,
   contactUnsubscribedFormBroadcast,
   archived,
   followUp,

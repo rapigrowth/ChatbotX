@@ -87,6 +87,11 @@ export function AddCondition({
             defaultFn: createDefaultFn(triggerEventTypes.enum.newContact),
           },
           {
+            label: t("trigger.conditions.commentReceived"),
+            value: triggerEventTypes.enum.commentReceived,
+            defaultFn: createDefaultFn(triggerEventTypes.enum.commentReceived),
+          },
+          {
             label: t("trigger.conditions.contactUnsubscribedFormBroadcast"),
             value: triggerEventTypes.enum.contactUnsubscribedFormBroadcast,
             defaultFn: createDefaultFn(

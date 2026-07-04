@@ -44,6 +44,8 @@ export const BaseEditor = ({
         return t("trigger.conditions.conversationTransferredToBot")
       case triggerEventTypes.enum.newContact:
         return t("trigger.conditions.newContact")
+      case triggerEventTypes.enum.commentReceived:
+        return t("trigger.conditions.commentReceived")
       case triggerEventTypes.enum.contactUnsubscribedFormBroadcast:
         return t("trigger.conditions.contactUnsubscribedFormBroadcast")
       case triggerEventTypes.enum.archived:
@@ -119,6 +121,8 @@ export const BaseEditor = ({
         return t("trigger.actions.clearCustomField")
       case triggerActions.enum.startAnotherFlow:
         return t("trigger.actions.startAnotherFlow")
+      case triggerActions.enum.replyToComment:
+        return t("trigger.actions.replyToComment")
       case triggerActions.enum.transferConversationToHuman:
         return t("trigger.actions.transferConversationToHuman")
       case triggerActions.enum.runGoogleSheet:

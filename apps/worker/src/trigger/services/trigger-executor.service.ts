@@ -19,6 +19,7 @@ export class TriggerExecutorService {
   async execute(
     trigger: TriggerWithConditions,
     contactId: string,
+    eventData?: Parameters<ActionExecutor["execute"]>[0]["eventData"],
   ): Promise<void> {
     const { id: triggerId, workspaceId, actions } = trigger
 
@@ -33,6 +34,7 @@ export class TriggerExecutorService {
             action: action as Record<string, unknown>,
             contactId,
             workspaceId,
+            eventData,
           })
         } catch (err) {
           logger.error(

@@ -1,6 +1,7 @@
 import { conversationService, tagSyncService } from "@chatbotx.io/business"
 import { and, db, eq, inArray } from "@chatbotx.io/database/client"
 import { triggerActions } from "@chatbotx.io/database/partials"
+import { createMessageRepository } from "@chatbotx.io/database/repositories"
 import {
   contactCustomFieldModel,
   contactsToTagsModel,
@@ -20,8 +21,11 @@ import {
   successStateDefaultFn,
 } from "@chatbotx.io/flow-config"
 import baseLogger from "@chatbotx.io/logger"
+import { RealtimeEventType } from "@chatbotx.io/partysocket-config"
 import { createId } from "@chatbotx.io/utils"
 import {
+  ChatJobAction,
+  chatQueue,
   IntegrationJobAction,
   integrationQueue,
 } from "@chatbotx.io/worker-config"
@@ -37,14 +41,20 @@ import type { ActionExecutionContext } from "../types"
 
 export class ActionExecutor {
   async execute(context: ActionExecutionContext): Promise<void> {
-    const { action, contactId, workspaceId } = context
+    const { action, contactId, workspaceId, eventData } = context
     const actionType = action.type
+    const eventMetadata = eventData?.eventData ?? {}
 
+    const eventConversationId = eventMetadata.conversationId as
+      | string
+      | undefined
     const conversation = await db.query.conversationModel.findFirst({
-      where: {
-        contactId,
-        workspaceId,
-      },
+      where: eventConversationId
+        ? { id: eventConversationId, workspaceId }
+        : {
+            contactId,
+            workspaceId,
+          },
       orderBy: {
         createdAt: "desc",
       },
@@ -55,10 +65,15 @@ export class ActionExecutor {
       return
     }
 
+    const eventContactInboxId = eventMetadata.contactInboxId as
+      | string
+      | undefined
     const recentContactInbox = await db.query.contactInboxModel.findFirst({
-      where: {
-        contactId,
-      },
+      where: eventContactInboxId
+        ? { id: eventContactInboxId }
+        : {
+            contactId,
+          },
       orderBy: {
         lastMessageAt: "desc",
       },
@@ -162,6 +177,66 @@ export class ActionExecutor {
               eq(contactCustomFieldModel.customFieldId, customFieldId),
             ),
           )
+        break
+      }
+
+      case triggerActions.enum.replyToComment: {
+        const text = String(action.text ?? "").trim()
+        const parentId = eventMetadata.messageId as string | undefined
+        const parentCreatedAt = eventMetadata.messageCreatedAt as
+          | string
+          | undefined
+        if (!(text && parentId && parentCreatedAt)) {
+          baseLogger.warn(
+            "replyToComment skipped: missing text or comment context",
+          )
+          break
+        }
+
+        const repository = await createMessageRepository()
+        const messageInput = {
+          id: createId(),
+          workspaceId,
+          conversationId: conversation.id,
+          contactInboxId: recentContactInbox.id,
+          messageType: "outgoing" as const,
+          contentType: "text" as const,
+          senderType: "bot" as const,
+          senderId: null,
+          sourceId: null,
+          text,
+          type: "comment" as const,
+          parentId,
+          createdAt: new Date(),
+          contentAttributes: null,
+        }
+        const message = await repository.create(
+          messageInput as Parameters<typeof repository.create>[0],
+        )
+
+        await Promise.allSettled([
+          chatQueue.add(ChatJobAction.broadcastEvent, {
+            type: ChatJobAction.broadcastEvent,
+            data: {
+              workspaceId,
+              event: {
+                eventType: RealtimeEventType.messageCreated,
+                data: message,
+              },
+            },
+          }),
+          chatQueue.add(ChatJobAction.sendChannelMessage, {
+            type: ChatJobAction.sendChannelMessage,
+            data: {
+              conversation,
+              contactInbox: recentContactInbox,
+              message: {
+                ...message,
+                parentCreatedAt: new Date(parentCreatedAt),
+              },
+            },
+          }),
+        ])
         break
       }
 

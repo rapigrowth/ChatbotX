@@ -152,6 +152,18 @@ export abstract class BaseEventEmitter {
     })
   }
 
+  async commentReceived(
+    workspaceId: string,
+    contactId: string,
+    metadata: Record<string, unknown>,
+  ): Promise<void> {
+    await this.emit(triggerEventTypes.enum.commentReceived, {
+      workspaceId,
+      contactId,
+      metadata,
+    })
+  }
+
   async contactUnsubscribed(
     workspaceId: string,
     contactId: string,

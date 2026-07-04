@@ -5,6 +5,7 @@ import {
 import { ComboboxField } from "@chatbotx.io/ui/components/form/combobox-field"
 import { MultiSelectField } from "@chatbotx.io/ui/components/form/multi-select-field"
 import { SwitchField } from "@chatbotx.io/ui/components/form/switch-field"
+import { TextareaField } from "@chatbotx.io/ui/components/form/textarea-field"
 import { useTranslations } from "next-intl"
 import { SetCustomField } from "@/features/contacts/components/add-custom-field-dialog"
 import { CustomFieldSelect } from "@/features/custom-fields/custom-field-select"
@@ -42,6 +43,14 @@ export const ActionEditor = ({
       )
     case triggerActions.enum.clearCustomField:
       return <CustomFieldSelect label="" name={`${parentName}.customFieldId`} />
+    case triggerActions.enum.replyToComment:
+      return (
+        <TextareaField
+          label={t("trigger.actions.commentText")}
+          name={`${parentName}.text`}
+          required
+        />
+      )
     case triggerActions.enum.startAnotherFlow:
       return (
         <ComboboxField

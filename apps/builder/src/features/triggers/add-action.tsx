@@ -17,6 +17,7 @@ import { useMemo } from "react"
 import { defaultFn as addTagsAction } from "./components/actions/schemas/add-tags"
 import { defaultFn as clearCustomFieldAction } from "./components/actions/schemas/clear-custom-field"
 import { defaultFn as removeTagsAction } from "./components/actions/schemas/remove-tags"
+import { defaultFn as replyToCommentAction } from "./components/actions/schemas/reply-to-comment"
 import { defaultFn as runGoogleSheetAction } from "./components/actions/schemas/run-google-sheet"
 import { defaultFn as setCustomFieldAction } from "./components/actions/schemas/set-custom-field"
 import { defaultFn as startFlowAction } from "./components/actions/schemas/start-flow"
@@ -30,6 +31,7 @@ type ActionOption = {
     | typeof removeTagsAction
     | typeof setCustomFieldAction
     | typeof clearCustomFieldAction
+    | typeof replyToCommentAction
     | typeof startFlowAction
     | typeof transferConversationToHumanAction
     | typeof runGoogleSheetAction
@@ -62,6 +64,11 @@ export function AddAction({
         label: t("trigger.actions.clearCustomField"),
         value: triggerActions.enum.clearCustomField,
         defaultFn: clearCustomFieldAction,
+      },
+      {
+        label: t("trigger.actions.replyToComment"),
+        value: triggerActions.enum.replyToComment,
+        defaultFn: replyToCommentAction,
       },
       {
         label: t("trigger.actions.startAnotherFlow"),

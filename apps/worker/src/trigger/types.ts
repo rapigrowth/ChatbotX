@@ -30,4 +30,5 @@ export type ActionExecutionContext = {
   action: Record<string, unknown>
   contactId: string
   workspaceId: string
+  eventData?: TriggerEventData
 }

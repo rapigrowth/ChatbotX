@@ -46,6 +46,13 @@ export const emitContactCreated = async (
     customFields,
   )
 
+export const emitCommentReceived = async (
+  workspaceId: string,
+  contactId: string,
+  metadata: Record<string, unknown>,
+) =>
+  await emitToAllEmitters("commentReceived", workspaceId, contactId, metadata)
+
 // Tag events
 export const emitTagApplied = async (
   workspaceId: string,

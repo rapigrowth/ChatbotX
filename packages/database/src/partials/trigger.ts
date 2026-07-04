@@ -15,6 +15,7 @@ export const triggerActions = z.enum([
   "unassignConversation",
   "disableBot",
   "enableBot",
+  "replyToComment",
 ])
 export type TriggerAction = z.infer<typeof triggerActions>
 
@@ -26,6 +27,7 @@ export const triggerEventTypes = z.enum([
   "conversationTransferredToHuman",
   "conversationTransferredToBot",
   "newContact",
+  "commentReceived",
   "contactUnsubscribedFormBroadcast",
   "archived",
   "followUp",

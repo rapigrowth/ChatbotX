@@ -41,7 +41,11 @@ const worker = new Worker(
 
         await Promise.allSettled(
           matchedTriggers.map((trigger) =>
-            triggerExecutor.execute(trigger, eventData.contactId),
+            triggerExecutor.execute(
+              trigger,
+              eventData.contactId,
+              eventData as TriggerEventData,
+            ),
           ),
         )
         return

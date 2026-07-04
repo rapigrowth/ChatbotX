@@ -2626,6 +2626,7 @@
       "conversationTransferredToHuman": "Conversation transferred to human",
       "conversationTransferredToBot": "Conversation transferred to bot",
       "newContact": "New Contact",
+      "commentReceived": "New Comment",
       "contactUnsubscribedFormBroadcast": "Contact Unsubscribed From Broadcast",
       "archived": "Archived",
       "followUp": "Follow Up",
@@ -2662,6 +2663,8 @@
       "setCustomField": "Set Custom Field",
       "clearCustomField": "Clear Custom Field",
       "startAnotherFlow": "Start Another Flow",
+      "replyToComment": "Reply to Comment",
+      "commentText": "Comment text",
       "notifyAdmins": "Notify Admins",
       "transferConversationToHuman": "Transfer Conversation to Human"
     },

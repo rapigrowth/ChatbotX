@@ -25,6 +25,7 @@ import type {
 } from "@chatbotx.io/database/types"
 import { emit } from "@chatbotx.io/event-bus"
 import {
+  emitCommentReceived,
   emitContactCreated,
   setWebhookExecutionContext,
 } from "@chatbotx.io/events"
@@ -394,12 +395,24 @@ export const receiveComment = async (
     parentId,
   }
 
-  await saveAndBroadcastMessage({
+  const { message, isNew } = await saveAndBroadcastMessage({
     inbox,
     contactInbox,
     conversation,
     incomingMessage,
   })
+
+  if (isNew && ["messenger", "instagram"].includes(integrationType)) {
+    await emitCommentReceived(inbox.workspaceId, contactInbox.contactId, {
+      channel: integrationType,
+      commentId: commentData.commentId,
+      messageId: message.id,
+      messageCreatedAt: message.createdAt.toISOString(),
+      conversationId: conversation.id,
+      contactInboxId: contactInbox.id,
+      postId: commentData.postId,
+    })
+  }
 }
 
 // When a commenter edits their comment, sync the new text to the DB

@@ -2602,6 +2602,7 @@
       "conversationTransferredToHuman": "Cuộc trò chuyện được chuyển cho người",
       "conversationTransferredToBot": "Cuộc trò chuyện được chuyển cho bot",
       "newContact": "Liên hệ mới",
+      "commentReceived": "Bình luận mới",
       "contactUnsubscribedFormBroadcast": "Liên hệ hủy đăng ký phát sóng",
       "archived": "Đã lưu trữ",
       "followUp": "Theo dõi",
@@ -2638,6 +2639,8 @@
       "setCustomField": "Thiết lập trường tùy chỉnh",
       "clearCustomField": "Xóa trường tùy chỉnh",
       "startAnotherFlow": "Bắt đầu luồng khác",
+      "replyToComment": "Trả lời bình luận",
+      "commentText": "Nội dung bình luận",
       "notifyAdmins": "Thông báo quản trị viên",
       "transferConversationToHuman": "Chuyển cuộc trò chuyện cho người"
     },

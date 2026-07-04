@@ -61,7 +61,7 @@ export const SignUpForm = ({
       </Card>
 
       <AcceptTermsAndPolicy
-        privacyPolicy={policyUrl ?? "https://chatbotx.io/privacy/"}
+        privacyPolicy={policyUrl ?? "/privacy"}
         termsOfService={termsOfServiceUrl ?? "https://chatbotx.io/terms/"}
       />
     </div>

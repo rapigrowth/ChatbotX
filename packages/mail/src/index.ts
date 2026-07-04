@@ -66,6 +66,18 @@ type SendMailOptions = {
   transport?: SmtpTransportOptions
 }
 
+const getTransportLabel = (options?: SendMailOptions): string => {
+  if (options?.transport) {
+    return `${options.transport.host}:${options.transport.port}`
+  }
+  try {
+    const url = new URL(env.SMTP_SERVER)
+    return `${url.hostname}:${url.port || (url.protocol === "smtps:" ? "465" : "587")}`
+  } catch {
+    return "SMTP_SERVER"
+  }
+}
+
 function formatFrom(options?: {
   fromEmail?: string
   fromName?: string
@@ -96,12 +108,21 @@ async function sendMail(
     ? createSmtpTransporter(options.transport)
     : transporter
 
-  await mailTransporter.sendMail({
-    from: options?.from ?? env.SMTP_FROM,
-    to: email,
-    subject,
-    html,
-  })
+  const transportLabel = getTransportLabel(options)
+  console.info("SMTP send start", { transport: transportLabel })
+
+  try {
+    await mailTransporter.sendMail({
+      from: options?.from ?? env.SMTP_FROM,
+      to: email,
+      subject,
+      html,
+    })
+    console.info("SMTP send ok", { transport: transportLabel })
+  } catch (error) {
+    console.error("SMTP send failed", { transport: transportLabel, error })
+    throw error
+  }
 }
 
 async function sendEmailWithTemplate(

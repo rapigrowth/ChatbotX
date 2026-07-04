@@ -127,8 +127,31 @@ const handle = async (request: Request): Promise<Response> => {
 
       // Re-home a baseURL-resolved verification redirect onto the branded host
       // the user is on (magic-link/verify, verify-email, reset-password).
-      const response = await instance.handler(request)
-      return rewriteAuthRedirectToPublicHost(request, response)
+      const shouldLogAuthRequest = url.pathname.includes("/sign-up/email")
+      if (shouldLogAuthRequest) {
+        console.info("Auth signup start", { host: url.host, tenantId })
+      }
+
+      try {
+        const response = await instance.handler(request)
+        if (shouldLogAuthRequest) {
+          console.info("Auth signup done", {
+            host: url.host,
+            status: response.status,
+            tenantId,
+          })
+        }
+        return rewriteAuthRedirectToPublicHost(request, response)
+      } catch (error) {
+        if (shouldLogAuthRequest) {
+          console.error("Auth signup failed", {
+            host: url.host,
+            tenantId,
+            error,
+          })
+        }
+        throw error
+      }
     },
     { strictScope: isSocialPath },
   )

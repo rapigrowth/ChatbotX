@@ -35,8 +35,9 @@ const handleWebhookEvent = async (
   config: InstagramConfig,
   queue: ContextQueue,
 ): Promise<void> => {
+  let body: string | null = null
   try {
-    const body = await req.text()
+    body = await req.text()
     if (!body) {
       throw new InstagramWebhookException("Empty webhook payload")
     }
@@ -158,6 +159,7 @@ const handleWebhookEvent = async (
       },
     })
   } catch (error) {
+    logger.warn({ err: error, body }, "Instagram webhook event failed")
     const errorMessage =
       error instanceof Error
         ? error.message
@@ -165,7 +167,7 @@ const handleWebhookEvent = async (
 
     throw new InstagramWebhookException(
       `Failed to process webhook event: ${errorMessage}`,
-      await req.text().catch(() => null),
+      body,
     )
   }
 }

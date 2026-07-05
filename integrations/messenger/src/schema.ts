@@ -57,6 +57,9 @@ export type MessengerActions<
     ctx: Context<IAuth>
     personas: SyncPersonaInput[]
   }) => Promise<{ personas: Array<{ id: string; facebookPersonaId?: string }> }>
+  listPosts: (props: {
+    ctx: Context<IAuth>
+  }) => Promise<import("./apis/post").FacebookPostList>
   getPostDetails: (props: {
     ctx: Context<IAuth>
     input: { postId: string }

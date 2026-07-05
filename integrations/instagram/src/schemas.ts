@@ -21,6 +21,9 @@ export type InstagramAuthValue = Oauth2AuthValue & {
 }
 
 export type InstagramActions = {
+  listPosts: (props: {
+    ctx: Context<InstagramAuthValue>
+  }) => Promise<import("./apis/post").InstagramMediaList>
   getPostDetails: (props: {
     ctx: Context<InstagramAuthValue>
     input: { postId: string }
@@ -87,9 +90,9 @@ export const instagramReferralSchema = z.object({
 export type InstagramReferral = z.infer<typeof instagramReferralSchema>
 
 export const instagramMessagingEventSchema = z.object({
-  sender: idSchema,
-  recipient: idSchema,
-  timestamp: z.number(),
+  sender: idSchema.optional(),
+  recipient: idSchema.optional(),
+  timestamp: z.number().optional(),
   message: instagramMessageSchema.optional(),
   read: instagramReadSchema.optional(),
   postback: instagramPostbackSchema.optional(),

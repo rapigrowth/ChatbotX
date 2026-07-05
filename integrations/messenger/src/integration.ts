@@ -9,7 +9,7 @@ import {
   listPageMessageTemplates,
 } from "./apis/message-templates"
 import { syncPersonas, unsubscribePageFromAppWebhook } from "./apis/page"
-import { getPostDetails } from "./apis/post"
+import { getPostDetails, listPosts } from "./apis/post"
 import { MessengerAPIException } from "./exception"
 import { botHandlers } from "./handlers/bot"
 import { commentHandlers } from "./handlers/comment"
@@ -40,6 +40,7 @@ const config: IntegrationDefinition<
   },
   actions: {
     syncPersonas,
+    listPosts,
     getPostDetails,
     listMessageTemplates: async ({ ctx, input }) =>
       listPageMessageTemplates(ctx.auth, input),

@@ -117,6 +117,7 @@ export default function UpdateTriggerForm(props: UpdateTriggerFormProps) {
                 <ConditionEditor
                   parentName={`conditions.${index}`}
                   type={condition.type}
+                  workspaceId={workspaceId}
                 />
               </BaseEditor>
             ))}

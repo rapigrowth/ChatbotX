@@ -107,6 +107,7 @@ export default function UpdateWebhookForm(props: UpdateWebhookFormProps) {
                 <ConditionEditor
                   parentName={`conditions.${index}`}
                   type={condition.type}
+                  workspaceId={workspaceId}
                 />
               </BaseEditor>
             ))}

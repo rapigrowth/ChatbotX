@@ -4,7 +4,7 @@ import {
   type IntegrationDefinition,
 } from "@chatbotx.io/sdk"
 import { unsubscribePageFromInstagramWebhook } from "./apis/page"
-import { getPostDetails } from "./apis/post"
+import { getPostDetails, listPosts } from "./apis/post"
 import { InstagramAPIException } from "./exception"
 import { botHandlers } from "./handlers/bot"
 import { commentHandlers } from "./handlers/comment"
@@ -34,6 +34,7 @@ const config: IntegrationDefinition<
     },
   },
   actions: {
+    listPosts,
     getPostDetails,
   },
   handleRequest: async (props) => {

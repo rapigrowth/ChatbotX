@@ -368,6 +368,7 @@ export const receiveComment = async (
     incomingContact,
     inbox,
     integrationRow,
+    skipProfileLookup: integrationType === "instagram",
   })
   if (!detected) {
     throw new SdkException("Unable to resolve contact and conversation")
@@ -499,12 +500,13 @@ const detectContactAndConversation = async (props: {
     inboxId: string
     [x: string]: unknown
   }
+  skipProfileLookup?: boolean
 }): Promise<{
   contactInbox: ContactInboxModel
   contact: ContactModel
   conversation: ConversationModel
 }> => {
-  const { incomingContact, inbox, integrationRow } = props
+  const { incomingContact, inbox, integrationRow, skipProfileLookup } = props
 
   const existingContactInbox = await db.query.contactInboxModel.findFirst({
     where: {
@@ -540,7 +542,7 @@ const detectContactAndConversation = async (props: {
     ...incomingContact,
     workspaceId: inbox.workspaceId,
   }
-  if (canGetUserProfileIfNeeded(inbox.channel)) {
+  if (!skipProfileLookup && canGetUserProfileIfNeeded(inbox.channel)) {
     const profileIntegration = allIntegrations[inbox.channel]
     if (profileIntegration) {
       const profileCtx = await buildContext({

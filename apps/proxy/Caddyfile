@@ -1,0 +1,22 @@
+{
+	admin off
+	auto_https off
+}
+
+:{$PORT:8080} {
+	log {
+		format json
+	}
+
+	handle /healthz {
+		respond "ok" 200
+	}
+
+	handle_path /ws/* {
+		reverse_proxy {$REALTIME_URL}
+	}
+
+	handle {
+		reverse_proxy {$BUILDER_URL}
+	}
+}

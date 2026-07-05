@@ -158,10 +158,19 @@ function defaultHttpStatus(category: ChannelErrorCategory): number {
   }
 }
 
+function toNumber(
+  value: number | string | null | undefined,
+): number | undefined {
+  if (value === null || value === undefined) {
+    return
+  }
+  const parsed = Number(value)
+  return Number.isNaN(parsed) ? undefined : parsed
+}
+
 function mapApiFields(fields: ChannelErrorSource): ChannelError {
-  const numCode = typeof fields.code === "number" ? fields.code : undefined
-  const numSubCode =
-    typeof fields.subCode === "number" ? fields.subCode : undefined
+  const numCode = toNumber(fields.code)
+  const numSubCode = toNumber(fields.subCode)
   const category = categorize(numCode, numSubCode, fields.type, fields.message)
   return new ChannelError(fields.message ?? UNKNOWN_ERROR.message, category, {
     code: fields.code ?? UNKNOWN_ERROR.code,
@@ -190,6 +199,13 @@ export function mapToChannelError(rawError: unknown): ChannelError {
 // Code 190 with no subcode is ambiguous and is NOT treated as revoked
 // to avoid false-positive channel disconnects.
 const REVOKED_TOKEN_SUBCODES = new Set([458, 460, 463, 467])
+const REVOKED_TOKEN_MESSAGES = [
+  "session has been invalidated",
+  "user changed their password",
+  "access token has expired",
+  "session has expired",
+  "invalid access token",
+]
 
 export function isRevokedTokenError(error: unknown): boolean {
   if (!(error instanceof InstagramException)) {
@@ -197,14 +213,21 @@ export function isRevokedTokenError(error: unknown): boolean {
   }
 
   const mappedError = mapToChannelError(error)
-  if (mappedError.subCode === null || mappedError.subCode === undefined) {
+  if (
+    mappedError.category !== ChannelErrorCategory.AUTH_FAILED ||
+    Number(mappedError.code) !== 190
+  ) {
     return false
   }
-  const subCode = Number(mappedError.subCode)
 
-  return (
-    mappedError.category === ChannelErrorCategory.AUTH_FAILED &&
-    mappedError.code === 190 &&
-    REVOKED_TOKEN_SUBCODES.has(subCode)
-  )
+  const subCode =
+    mappedError.subCode === null || mappedError.subCode === undefined
+      ? undefined
+      : Number(mappedError.subCode)
+  if (subCode !== undefined && REVOKED_TOKEN_SUBCODES.has(subCode)) {
+    return true
+  }
+
+  const message = error.message.toLowerCase()
+  return REVOKED_TOKEN_MESSAGES.some((text) => message.includes(text))
 }

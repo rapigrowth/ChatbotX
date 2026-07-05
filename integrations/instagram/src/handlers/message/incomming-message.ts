@@ -85,10 +85,13 @@ const getMessageEntity = async (
   let quickReplyAction: string | null = null
   let ref: string | null = null
 
+  if (!(messaging.sender && messaging.recipient)) {
+    throw new InstagramException("Missing sender or recipient")
+  }
+
+  const { sender, recipient } = messaging
   const contactSourceId =
-    messaging.sender.id === ctx.auth.metadata.igId
-      ? messaging.recipient.id
-      : messaging.sender.id
+    sender.id === ctx.auth.metadata.igId ? recipient.id : sender.id
   const contact: IncomingContact = {
     sourceId: contactSourceId,
   }
@@ -97,7 +100,7 @@ const getMessageEntity = async (
     message = {
       sourceId: messaging.message.mid,
       messageType:
-        messaging.sender.id === ctx.auth.metadata.igId
+        sender.id === ctx.auth.metadata.igId
           ? messageTypes.enum.outgoing
           : messageTypes.enum.incoming,
       text: messaging.message.text,

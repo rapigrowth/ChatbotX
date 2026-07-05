@@ -1,7 +1,7 @@
 import { ChannelErrorCategory } from "@chatbotx.io/sdk"
 import { describe, expect, test } from "vitest"
 import { MessengerException } from "../src/exception"
-import { mapToChannelError } from "../src/lib/error-mapper"
+import { isRevokedTokenError, mapToChannelError } from "../src/lib/error-mapper"
 
 describe("messenger error-mapper USER_BLOCKED detection", () => {
   test("code 551 maps to USER_BLOCKED", () => {
@@ -39,5 +39,27 @@ describe("messenger error-mapper USER_BLOCKED detection", () => {
     const data = await mapped.getErrorData()
     expect(data.category).toBe("user_blocked")
     expect(data.isPermanent).toBe(true)
+  })
+})
+
+describe("isRevokedTokenError", () => {
+  test("detects expired sessions when Meta omits the subcode", () => {
+    const exc = new MessengerException(
+      "Error validating access token: Session has expired on Saturday, 01-Jan-22 00:00:00 PST.",
+      400,
+      190,
+    )
+
+    expect(isRevokedTokenError(exc)).toBe(true)
+  })
+
+  test("detects invalidated sessions when Meta omits the subcode", () => {
+    const exc = new MessengerException(
+      "Error validating access token: The session has been invalidated because the user changed their password or Facebook has changed the session for security reasons.",
+      400,
+      190,
+    )
+
+    expect(isRevokedTokenError(exc)).toBe(true)
   })
 })

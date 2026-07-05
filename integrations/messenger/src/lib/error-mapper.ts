@@ -146,6 +146,13 @@ function mapApiFields(fields: ChannelErrorSource): ChannelError {
 //   463 = access token expired
 //   467 = invalid access token
 const REVOKED_TOKEN_SUBCODES = new Set([458, 460, 463, 467])
+const REVOKED_TOKEN_MESSAGES = [
+  "session has been invalidated",
+  "user changed their password",
+  "access token has expired",
+  "session has expired",
+  "invalid access token",
+]
 
 export function isRevokedTokenError(error: unknown): boolean {
   if (!(error instanceof MessengerException)) {
@@ -153,13 +160,23 @@ export function isRevokedTokenError(error: unknown): boolean {
   }
 
   const mappedError = mapToChannelError(error)
+  if (
+    mappedError.category !== ChannelErrorCategory.AUTH_FAILED ||
+    Number(mappedError.code) !== 190
+  ) {
+    return false
+  }
 
-  return (
-    mappedError.category === ChannelErrorCategory.AUTH_FAILED &&
-    mappedError.code === 190 &&
-    mappedError.subCode !== null &&
-    REVOKED_TOKEN_SUBCODES.has(Number(mappedError.subCode))
-  )
+  const subCode =
+    mappedError.subCode === null || mappedError.subCode === undefined
+      ? undefined
+      : Number(mappedError.subCode)
+  if (subCode !== undefined && REVOKED_TOKEN_SUBCODES.has(subCode)) {
+    return true
+  }
+
+  const message = error.message.toLowerCase()
+  return REVOKED_TOKEN_MESSAGES.some((text) => message.includes(text))
 }
 
 export function mapToChannelError(rawError: unknown): ChannelError {

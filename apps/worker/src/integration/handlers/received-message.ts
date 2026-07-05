@@ -350,6 +350,14 @@ export const receiveComment = async (
 
   const { integrationType, integrationIdentifier, commentData } = props
 
+  if (integrationType === "instagram" && commentData.fromId === integrationIdentifier) {
+    logger.warn(
+      { commentId: commentData.commentId, integrationIdentifier },
+      "receiveComment: skipping own Instagram comment echo",
+    )
+    return
+  }
+
   const { inbox, integrationRow } =
     await integrationService.identifyInboxAndIntegrationAuthFromIdentifier(
       integrationType as IntegrationType,

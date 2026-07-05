@@ -87,6 +87,13 @@ const handleWebhookEvent = async (
         return
       }
       const value = parsed.data
+      if (value.from.id === entry.id) {
+        logger.warn(
+          { commentId: value.id, instagramId: entry.id },
+          "own Instagram comment echo — skipping",
+        )
+        return
+      }
       if (!value.media?.id) {
         logger.warn(
           { commentId: value.id },

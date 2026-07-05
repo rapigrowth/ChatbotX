@@ -24,12 +24,14 @@ import {
   type InstagramButton,
   type InstagramProfileRequest,
   integration as integrationInstagram,
+  isRevokedTokenError,
 } from "@chatbotx.io/integration-instagram"
 import {
   type WorkspaceIdAndIdRequestParams,
   workspaceIdAndIdRequestParams,
 } from "@/features/common/schemas"
 import { getBrandingUrl } from "@/features/integration-webchat/lib"
+import { logger } from "@/lib/log"
 import { workspaceActionClient } from "@/lib/safe-action"
 import { findIntegrationInstagram } from "../queries"
 import {
@@ -67,53 +69,67 @@ export const updateInstagramAction = workspaceActionClient
             .where(eq(integrationInstagramModel.id, id))
 
           if (integrationInstagramData) {
-            const auth = integrationInstagramData.auth as InstagramAuthValue
-            const botContext = await buildContext({
-              workspaceId: ctx.workspace.id,
-              integrationType: "instagram",
-              integration: { ...integrationInstagramData, auth },
-            })
+            try {
+              const auth = integrationInstagramData.auth as InstagramAuthValue
+              const botContext = await buildContext({
+                workspaceId: ctx.workspace.id,
+                integrationType: "instagram",
+                integration: { ...integrationInstagramData, auth },
+              })
 
-            const fieldsToDelete = getInstagramFieldsToDelete(parsedInput)
-            if (fieldsToDelete.length > 0) {
-              await integrationInstagram.runChannelHandler(
-                "bot",
-                "deleteProfileFields",
-                {
-                  ctx: botContext,
-                  fields: fieldsToDelete,
-                },
-              )
-            }
+              const fieldsToDelete = getInstagramFieldsToDelete(parsedInput)
+              if (fieldsToDelete.length > 0) {
+                await integrationInstagram.runChannelHandler(
+                  "bot",
+                  "deleteProfileFields",
+                  {
+                    ctx: botContext,
+                    fields: fieldsToDelete,
+                  },
+                )
+              }
 
-            const profileData: Partial<InstagramProfileRequest> = {}
+              const profileData: Partial<InstagramProfileRequest> = {}
 
-            if (parsedInput.conversationStarters.length) {
-              profileData.ice_breakers = await buildIceBreakersParams(
-                parsedInput.conversationStarters,
-              )
-            }
+              if (parsedInput.conversationStarters.length) {
+                profileData.ice_breakers = await buildIceBreakersParams(
+                  parsedInput.conversationStarters,
+                )
+              }
 
-            if (parsedInput.persistentMenus.length) {
-              profileData.persistent_menu = await buildPersistentMenuParams(
-                parsedInput.persistentMenus,
-                botContext.platform.appUrl,
-              )
-            }
+              if (parsedInput.persistentMenus.length) {
+                profileData.persistent_menu = await buildPersistentMenuParams(
+                  parsedInput.persistentMenus,
+                  botContext.platform.appUrl,
+                )
+              }
 
-            if (Object.keys(profileData).length > 0) {
-              await integrationInstagram.runChannelHandler(
-                "bot",
-                "updateProfile",
-                {
-                  ctx: botContext,
-                  data: profileData as InstagramProfileRequest,
-                },
+              if (Object.keys(profileData).length > 0) {
+                await integrationInstagram.runChannelHandler(
+                  "bot",
+                  "updateProfile",
+                  {
+                    ctx: botContext,
+                    data: profileData as InstagramProfileRequest,
+                  },
+                )
+              }
+            } catch (error) {
+              if (!isRevokedTokenError(error)) {
+                throw error
+              }
+              logger.warn(
+                error,
+                "Instagram token invalidated — saved local settings without syncing profile",
               )
             }
           }
         })
-      } catch {
+      } catch (error) {
+        logger.error({ err: error }, "Failed to update Instagram integration")
+        if (error instanceof ChatbotXException) {
+          throw error
+        }
         throw new ChatbotXException("Failed to update Instagram integration")
       }
     },

@@ -2643,7 +2643,9 @@
       "clearCustomField": "Xóa trường tùy chỉnh",
       "startAnotherFlow": "Bắt đầu luồng khác",
       "replyToComment": "Trả lời bình luận",
+      "sendPrivateReplyToComment": "Gửi trả lời riêng cho bình luận",
       "commentText": "Nội dung bình luận",
+      "privateReplyText": "Nội dung trả lời riêng",
       "notifyAdmins": "Thông báo quản trị viên",
       "transferConversationToHuman": "Chuyển cuộc trò chuyện cho người"
     },

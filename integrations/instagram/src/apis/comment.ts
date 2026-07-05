@@ -22,6 +22,28 @@ export const sendComment = (
   )
 }
 
+export const sendPrivateReply = (
+  auth: InstagramAuthValue,
+  commentId: string,
+  message: string,
+): Promise<{ recipient_id?: string; message_id?: string }> => {
+  const version = auth.metadata.version ?? DEFAULT_API_VERSION
+  const endpoint = `${version}/${commentId}/private_replies`
+
+  return rescue(endpoint, () =>
+    instagramBusinessClient.post<{
+      recipient_id?: string
+      message_id?: string
+    }>(endpoint, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${auth.tokens.accessToken}`,
+      },
+      json: { message },
+    }),
+  )
+}
+
 export const deleteComment = (
   auth: InstagramAuthValue,
   commentId: string,

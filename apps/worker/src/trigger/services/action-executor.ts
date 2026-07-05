@@ -37,6 +37,7 @@ import {
   sendSpreadsheetData,
   updateSpreadsheetRow,
 } from "../../integration/handlers/spreadsheet-handler"
+import { resolveIntegrationContextFromContactInbox } from "../../services/integrations"
 import type { ActionExecutionContext } from "../types"
 
 export class ActionExecutor {
@@ -237,6 +238,37 @@ export class ActionExecutor {
             },
           }),
         ])
+        break
+      }
+
+      case triggerActions.enum.sendPrivateReplyToComment: {
+        const text = String(action.text ?? "").trim()
+        const commentId = eventMetadata.commentId as string | undefined
+        if (!(text && commentId)) {
+          baseLogger.warn(
+            "sendPrivateReplyToComment skipped: missing text or comment context",
+          )
+          break
+        }
+
+        if (recentContactInbox.channel !== "instagram") {
+          baseLogger.warn(
+            { channel: recentContactInbox.channel },
+            "sendPrivateReplyToComment skipped: only Instagram is supported",
+          )
+          break
+        }
+
+        const { integration, ctx } =
+          await resolveIntegrationContextFromContactInbox({
+            workspaceId,
+            contactInbox: recentContactInbox,
+          })
+
+        await integration.runChannelHandler("comment", "sendPrivateReply", {
+          ctx,
+          data: { commentId, message: text },
+        })
         break
       }
 

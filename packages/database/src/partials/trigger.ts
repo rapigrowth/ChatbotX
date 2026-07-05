@@ -16,6 +16,7 @@ export const triggerActions = z.enum([
   "disableBot",
   "enableBot",
   "replyToComment",
+  "sendPrivateReplyToComment",
 ])
 export type TriggerAction = z.infer<typeof triggerActions>
 

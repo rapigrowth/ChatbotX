@@ -1,4 +1,5 @@
 export * from "./apis/auth"
+export * from "./apis/comment"
 export * from "./apis/contact-profile"
 export * from "./apis/page"
 export * from "./integration"

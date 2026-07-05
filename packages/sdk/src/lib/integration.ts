@@ -147,6 +147,18 @@ export type CommentHandlers<IAuth extends AuthValue> = {
       messageIds: string[]
     }
   >
+  sendPrivateReply: Handler<
+    {
+      ctx: Context<IAuth>
+      data: {
+        commentId: string
+        message: string
+      }
+    },
+    {
+      messageIds: string[]
+    }
+  >
   deleteComment: Handler<
     {
       ctx: Context<IAuth>

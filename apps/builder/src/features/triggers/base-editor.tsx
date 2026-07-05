@@ -123,6 +123,8 @@ export const BaseEditor = ({
         return t("trigger.actions.startAnotherFlow")
       case triggerActions.enum.replyToComment:
         return t("trigger.actions.replyToComment")
+      case triggerActions.enum.sendPrivateReplyToComment:
+        return t("trigger.actions.sendPrivateReplyToComment")
       case triggerActions.enum.transferConversationToHuman:
         return t("trigger.actions.transferConversationToHuman")
       case triggerActions.enum.runGoogleSheet:

@@ -19,6 +19,7 @@ import { defaultFn as clearCustomFieldAction } from "./components/actions/schema
 import { defaultFn as removeTagsAction } from "./components/actions/schemas/remove-tags"
 import { defaultFn as replyToCommentAction } from "./components/actions/schemas/reply-to-comment"
 import { defaultFn as runGoogleSheetAction } from "./components/actions/schemas/run-google-sheet"
+import { defaultFn as sendPrivateReplyToCommentAction } from "./components/actions/schemas/send-private-reply-to-comment"
 import { defaultFn as setCustomFieldAction } from "./components/actions/schemas/set-custom-field"
 import { defaultFn as startFlowAction } from "./components/actions/schemas/start-flow"
 import { defaultFn as transferConversationToHumanAction } from "./components/actions/schemas/transfer-conversation-to-human"
@@ -32,6 +33,7 @@ type ActionOption = {
     | typeof setCustomFieldAction
     | typeof clearCustomFieldAction
     | typeof replyToCommentAction
+    | typeof sendPrivateReplyToCommentAction
     | typeof startFlowAction
     | typeof transferConversationToHumanAction
     | typeof runGoogleSheetAction
@@ -69,6 +71,11 @@ export function AddAction({
         label: t("trigger.actions.replyToComment"),
         value: triggerActions.enum.replyToComment,
         defaultFn: replyToCommentAction,
+      },
+      {
+        label: t("trigger.actions.sendPrivateReplyToComment"),
+        value: triggerActions.enum.sendPrivateReplyToComment,
+        defaultFn: sendPrivateReplyToCommentAction,
       },
       {
         label: t("trigger.actions.startAnotherFlow"),

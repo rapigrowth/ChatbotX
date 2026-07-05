@@ -2667,7 +2667,9 @@
       "clearCustomField": "Clear Custom Field",
       "startAnotherFlow": "Start Another Flow",
       "replyToComment": "Reply to Comment",
+      "sendPrivateReplyToComment": "Send Private Reply to Comment",
       "commentText": "Comment text",
+      "privateReplyText": "Private reply text",
       "notifyAdmins": "Notify Admins",
       "transferConversationToHuman": "Transfer Conversation to Human"
     },

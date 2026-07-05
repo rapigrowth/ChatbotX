@@ -51,6 +51,14 @@ export const ActionEditor = ({
           required
         />
       )
+    case triggerActions.enum.sendPrivateReplyToComment:
+      return (
+        <TextareaField
+          label={t("trigger.actions.privateReplyText")}
+          name={`${parentName}.text`}
+          required
+        />
+      )
     case triggerActions.enum.startAnotherFlow:
       return (
         <ComboboxField

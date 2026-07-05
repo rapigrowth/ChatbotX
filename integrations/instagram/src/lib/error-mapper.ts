@@ -85,7 +85,16 @@ function categorize(
   code: number | undefined,
   subcode: number | undefined,
   type: string | undefined,
+  message?: string,
 ): ChannelErrorCategory {
+  const lowerMessage = message?.toLowerCase() ?? ""
+  if (
+    lowerMessage.includes("deemed abusive") ||
+    lowerMessage.includes("otherwise disallowed")
+  ) {
+    return ChannelErrorCategory.PERMISSION_DENIED
+  }
+
   if (subcode !== undefined && SUBCODE_OVERRIDES.has(subcode)) {
     const override = SUBCODE_OVERRIDES.get(subcode)
     if (override !== undefined) {
@@ -153,7 +162,7 @@ function mapApiFields(fields: ChannelErrorSource): ChannelError {
   const numCode = typeof fields.code === "number" ? fields.code : undefined
   const numSubCode =
     typeof fields.subCode === "number" ? fields.subCode : undefined
-  const category = categorize(numCode, numSubCode, fields.type)
+  const category = categorize(numCode, numSubCode, fields.type, fields.message)
   return new ChannelError(fields.message ?? UNKNOWN_ERROR.message, category, {
     code: fields.code ?? UNKNOWN_ERROR.code,
     httpStatusCode: fields.httpStatusCode ?? defaultHttpStatus(category),

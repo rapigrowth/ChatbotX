@@ -33,7 +33,6 @@ export class ConditionEvaluator {
       case triggerEventTypes.enum.conversationTransferredToHuman:
       case triggerEventTypes.enum.conversationTransferredToBot:
       case triggerEventTypes.enum.newContact:
-      case triggerEventTypes.enum.commentReceived:
       case triggerEventTypes.enum.contactUnsubscribedFormBroadcast:
       case triggerEventTypes.enum.archived:
       case triggerEventTypes.enum.followUp:
@@ -44,6 +43,9 @@ export class ConditionEvaluator {
       case triggerEventTypes.enum.contactReferredANewContact:
       case triggerEventTypes.enum.contactReferredExistingContact:
         return true
+
+      case triggerEventTypes.enum.commentReceived:
+        return this.evaluateCommentCondition(sourceId, eventData.eventData)
 
       case triggerEventTypes.enum.dateTimeBasedTrigger:
         return await this.evaluateDateTimeCondition(
@@ -57,6 +59,16 @@ export class ConditionEvaluator {
       default:
         return false
     }
+  }
+
+  private evaluateCommentCondition(
+    expectedPostId: string | null,
+    metadata: Record<string, unknown>,
+  ): boolean {
+    if (!expectedPostId) {
+      return true
+    }
+    return expectedPostId === metadata.postId
   }
 
   private evaluateTagCondition(

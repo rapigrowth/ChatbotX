@@ -2627,6 +2627,8 @@
       "conversationTransferredToBot": "Conversation transferred to bot",
       "newContact": "New Contact",
       "commentReceived": "New Comment",
+      "postId": "Post ID",
+      "postIdPlaceholder": "Optional: only this post/media",
       "contactUnsubscribedFormBroadcast": "Contact Unsubscribed From Broadcast",
       "archived": "Archived",
       "followUp": "Follow Up",

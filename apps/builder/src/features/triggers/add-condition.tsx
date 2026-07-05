@@ -20,6 +20,7 @@ import { defaultFn as addCustomFieldValueChangedCondition } from "../conditions/
 import { defaultFn as addDateTimeBaseTriggerCondition } from "../conditions/schemas/date-time-based-trigger"
 import {
   createDefaultFn,
+  createDefaultFnWithOptionalSourceId,
   createDefaultFnWithSourceId,
 } from "../conditions/schemas/simple-conditions"
 import { defaultFn as addTagAppliedCondition } from "../conditions/schemas/tag-applied"
@@ -89,7 +90,9 @@ export function AddCondition({
           {
             label: t("trigger.conditions.commentReceived"),
             value: triggerEventTypes.enum.commentReceived,
-            defaultFn: createDefaultFn(triggerEventTypes.enum.commentReceived),
+            defaultFn: createDefaultFnWithOptionalSourceId(
+              triggerEventTypes.enum.commentReceived,
+            ),
           },
           {
             label: t("trigger.conditions.contactUnsubscribedFormBroadcast"),

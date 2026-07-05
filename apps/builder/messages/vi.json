@@ -2603,6 +2603,8 @@
       "conversationTransferredToBot": "Cuộc trò chuyện được chuyển cho bot",
       "newContact": "Liên hệ mới",
       "commentReceived": "Bình luận mới",
+      "postId": "ID bài viết",
+      "postIdPlaceholder": "Tùy chọn: chỉ bài viết/media này",
       "contactUnsubscribedFormBroadcast": "Liên hệ hủy đăng ký phát sóng",
       "archived": "Đã lưu trữ",
       "followUp": "Theo dõi",

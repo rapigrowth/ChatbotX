@@ -4,6 +4,7 @@ import {
 } from "@chatbotx.io/database/partials"
 import { InputField } from "@chatbotx.io/ui/components/form/input-field"
 import { SelectField } from "@chatbotx.io/ui/components/form/select-field"
+import { useTranslations } from "next-intl"
 import { useFormContext } from "react-hook-form"
 import { useTagSelectOptions } from "@/features/tags/provider/tag-hook"
 import { CustomFieldValueChanged } from "./custom-field-value-changed"
@@ -18,6 +19,7 @@ export const ConditionEditor = ({
 }) => {
   const tagOptions = useTagSelectOptions()
   const form = useFormContext()
+  const t = useTranslations()
 
   switch (type) {
     case triggerEventTypes.enum.tagApplied:
@@ -30,6 +32,23 @@ export const ConditionEditor = ({
       return <DateTimeBasedTrigger parentName={parentName} />
     case triggerEventTypes.enum.customFieldValueChanged:
       return <CustomFieldValueChanged parentName={parentName} />
+    case triggerEventTypes.enum.commentReceived:
+      return (
+        <>
+          <InputField type="hidden" {...form.register(`${parentName}.id`)} />
+          <InputField type="hidden" {...form.register(`${parentName}.type`)} />
+          <InputField
+            label={t("trigger.conditions.postId")}
+            placeholder={t("trigger.conditions.postIdPlaceholder")}
+            {...form.register(`${parentName}.sourceId`)}
+          />
+          <InputField
+            type="hidden"
+            {...form.register(`${parentName}.operator`)}
+          />
+          <InputField type="hidden" {...form.register(`${parentName}.value`)} />
+        </>
+      )
     default:
       return (
         <>

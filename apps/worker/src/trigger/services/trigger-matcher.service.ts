@@ -22,7 +22,10 @@ export class TriggerMatcherService {
       return []
     }
 
-    const sourceId = metadata.sourceId as string | undefined
+    const sourceId =
+      eventType === triggerEventTypes.enum.commentReceived
+        ? (metadata.postId as string | undefined)
+        : (metadata.sourceId as string | undefined)
 
     const triggers = await db.query.triggerModel.findMany({
       where: {
@@ -39,7 +42,7 @@ export class TriggerMatcherService {
       trigger.conditions.some(
         (c) =>
           conditionTypes.includes(c.type) &&
-          (sourceId ? c.sourceId === sourceId : true),
+          (c.sourceId ? c.sourceId === sourceId : true),
       ),
     )
 

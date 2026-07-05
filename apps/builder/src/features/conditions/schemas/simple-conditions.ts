@@ -22,9 +22,11 @@ export const conversationTransferredToBot = createSimpleCondition(
 export const newContact = createSimpleCondition(
   triggerEventTypes.enum.newContact,
 )
-export const commentReceived = createSimpleCondition(
-  triggerEventTypes.enum.commentReceived,
-)
+export const commentReceived = z.object({
+  id: zodBigintAsString().optional(),
+  type: z.literal(triggerEventTypes.enum.commentReceived),
+  sourceId: z.string().optional(),
+})
 export const contactUnsubscribedFormBroadcast = createSimpleCondition(
   triggerEventTypes.enum.contactUnsubscribedFormBroadcast,
 )
@@ -64,5 +66,9 @@ export const createDefaultFn =
   () => ({ type })
 
 export const createDefaultFnWithSourceId =
+  <T extends TriggerEventType>(type: T) =>
+  () => ({ type, sourceId: "" })
+
+export const createDefaultFnWithOptionalSourceId =
   <T extends TriggerEventType>(type: T) =>
   () => ({ type, sourceId: "" })

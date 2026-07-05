@@ -119,13 +119,24 @@ const handleWebhookEvent = async (
       return
     }
 
-    if (messaging[0]?.read) {
+    const event = messaging[0]
+    if (!(event?.sender && event.recipient)) {
+      logger.debug(
+        { entryId: entry.id, event },
+        "Instagram webhook messaging event missing sender/recipient — skipping",
+      )
+      return
+    }
+
+    const sender = event.sender
+
+    if (event.read) {
       await queue?.add("contactMarkAsRead", {
         type: "contactMarkAsRead",
         data: {
           integrationType: "instagram",
           integrationIdentifier: entry.id,
-          sourceConversationId: messaging[0].sender.id,
+          sourceConversationId: sender.id,
           payload: webhookData,
         },
       })
@@ -133,28 +144,23 @@ const handleWebhookEvent = async (
     }
 
     // Skip if this message is not a message or postback
-    if (!(messaging[0].message || messaging[0].postback)) {
+    if (!(event.message || event.postback)) {
       return
     }
 
     if (
-      messaging[0].message?.is_echo === true &&
-      messaging[0].message?.metadata === INSTAGRAM_MESSAGE_METADATA
+      event.message?.is_echo === true &&
+      event.message?.metadata === INSTAGRAM_MESSAGE_METADATA
     ) {
       // Skip if this message is from our own bot
       return
     }
 
-    // Calculate integration identifier
-    const integrationIdentifier = messaging[0].message?.is_echo
-      ? messaging[0].sender.id
-      : messaging[0].recipient.id
-
     await queue?.add("incomingMessage", {
       type: "incomingMessage",
       data: {
         integrationType: "instagram",
-        integrationIdentifier,
+        integrationIdentifier: entry.id,
         payload: webhookData,
       },
     })

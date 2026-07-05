@@ -28,7 +28,7 @@ export const sendPrivateReply = (
   message: string,
 ): Promise<{ recipient_id?: string; message_id?: string }> => {
   const version = auth.metadata.version ?? DEFAULT_API_VERSION
-  const endpoint = `${version}/${commentId}/private_replies`
+  const endpoint = `${version}/${auth.metadata.igId}/messages`
 
   return rescue(endpoint, () =>
     instagramBusinessClient.post<{
@@ -39,7 +39,10 @@ export const sendPrivateReply = (
         "Content-Type": "application/json",
         Authorization: `Bearer ${auth.tokens.accessToken}`,
       },
-      json: { message },
+      json: {
+        recipient: { comment_id: commentId },
+        message: { text: message },
+      },
     }),
   )
 }

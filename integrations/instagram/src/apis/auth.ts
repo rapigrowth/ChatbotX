@@ -57,17 +57,32 @@ export function exchangeCodeForToken(
           grant_type: "authorization_code",
         }),
       })
-    const longLivedToken = await exchangeLongLivedToken(
-      {
-        clientId: settings.clientId,
-        clientSecret: settings.clientSecret,
-        version: settings.version,
-      },
-      res.access_token,
-    )
-    return { accessToken: longLivedToken, userId: String(res.user_id) }
+    try {
+      const longLivedToken = await exchangeLongLivedToken(
+        {
+          clientId: settings.clientId,
+          clientSecret: settings.clientSecret,
+          version: settings.version,
+        },
+        res.access_token,
+      )
+      return { accessToken: longLivedToken, userId: String(res.user_id) }
+    } catch (error) {
+      if (isUnsupportedRequestMethodError(error)) {
+        logger.warn(
+          error,
+          "Instagram long-lived token exchange is unsupported; using short-lived token",
+        )
+        return { accessToken: res.access_token, userId: String(res.user_id) }
+      }
+      throw error
+    }
   })
 }
+
+const isUnsupportedRequestMethodError = (error: unknown) =>
+  error instanceof InstagramException &&
+  error.message.includes("Unsupported request - method type")
 
 export const exchangeLongLivedToken = (
   settings: {

@@ -7,8 +7,8 @@ describe("exchangeLongLivedToken", () => {
     vi.restoreAllMocks()
   })
 
-  it("gets the short-lived token exchange with query params", async () => {
-    const get = vi.spyOn(instagramBusinessClient, "get").mockResolvedValue({
+  it("posts the short-lived token exchange form", async () => {
+    const post = vi.spyOn(instagramBusinessClient, "post").mockResolvedValue({
       access_token: "long-lived-token",
       expires_in: 5_184_000,
     })
@@ -20,12 +20,12 @@ describe("exchangeLongLivedToken", () => {
       ),
     ).resolves.toBe("long-lived-token")
 
-    expect(get).toHaveBeenCalledWith("access_token", {
-      searchParams: {
+    expect(post).toHaveBeenCalledWith("access_token", {
+      body: new URLSearchParams({
         grant_type: "ig_exchange_token",
         client_secret: "secret",
         access_token: "short-lived-token",
-      },
+      }),
     })
   })
 })

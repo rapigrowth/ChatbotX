@@ -81,12 +81,12 @@ export const exchangeLongLivedToken = (
 
   return rescue(endpoint, async () => {
     const res: { access_token: string; expires_in: number } =
-      await instagramBusinessClient.post(endpoint, {
-        body: new URLSearchParams({
+      await instagramBusinessClient.get(endpoint, {
+        searchParams: {
           grant_type: "ig_exchange_token",
           client_secret: settings.clientSecret,
           access_token: accessToken,
-        }),
+        },
       })
 
     return res.access_token

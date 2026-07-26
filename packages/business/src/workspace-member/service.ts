@@ -24,6 +24,14 @@ export class WorkspaceMemberService extends BaseService {
       .values(data)
       .returning()
 
+    // Membership lists are cached per user. Invalidate immediately so a newly
+    // accepted invitation is visible when the user opens the new workspace.
+    await this.invalidateCacheTags([
+      `users:${data.userId}:workspace-members`,
+      `workspaces:${data.workspaceId}`,
+      `workspaces:${data.workspaceId}:workspace-members`,
+    ])
+
     return workspaceMember
   }
 
